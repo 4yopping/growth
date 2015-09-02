@@ -1,0 +1,33 @@
+{
+  "name": "growth",
+  "version": "0.0.1",
+  "description": "Growth module to get best fit of data given",
+  "main": "growth.js",
+  "dependencies": {
+    "mongoose": "^4.1.5",
+    "nsolvejs": "0.0.5",
+    "sinon": "^1.16.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.0",
+    "rc": "^1.1.1",
+    "sinon": "^1.16.1"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4yopping/growth.git"
+  },
+  "keywords": [
+    "growth",
+    "bestfit",
+    "nsolvejs"
+  ],
+  "author": "4yopping",
+  "bugs": {
+    "url": "https://github.com/4yopping/growth/issues"
+  },
+  "homepage": "https://github.com/4yopping/growth#readme"
+}
