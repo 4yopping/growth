@@ -1,10 +1,11 @@
 'use strict';
 
 var assert = require('assert');
-var bestfit = require('nsolvejs').fit.best;
+var bestfit = require('./_growth');
 var conf = require('./conf');
 var Growth = require('./growth');
 var sinon = require('sinon');
+var oms_model = require('./oms_model');
 
 var options = {
   mongo: conf.mongo
@@ -85,22 +86,38 @@ describe('growth', function () {
     this.spy = sinon.spy();
     this.data = {
       key: 'baby-55df94',
-      data: [[3,5]],
-      ofX: [23],
-      ofY: [15]
+      vs : 'wfa',
+            sex : 'boy',
+            data     : [[0,5]],
+            upgrade  : true,
+            ofX      : [23],
+            ofY      : [15]
+
     };
     this.options = {
       smoothing: true,
       noiseeliminate: true,
       smoothingmethod: 'exponential',
       alpha: 0.8,
-      fits_name: ['sqrt']
+      fits_name: ['sqrt'],
+      model :Growth,
+            data_ref : {},
+            min_data : 10
     };
+    oms_model.find({vs : this.data.vs, sex : this.data.sex}).select('data').exec(function (error,data) {
+    if(error){console.log('error=',error);}
+      var data_ref = {};
+      data.forEach(function(item) {
+        data_ref[item.data.time] = item.data.measure;
+        this.options.data_ref = data_ref;
+    });
+
+  });
   });
 
   it('should be return the best fit', function () {
-    growth.getBestFit(this.data, this.options, this.spy);
-    var fit = bestfit(this.data.data, this.data.ofX, this.data.ofY, this.options);
+
+    bestfit(this.data, this.options, this.spy);
     assert(this.spy.calledWith(Object));
   });
 

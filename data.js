@@ -1,55 +1,41 @@
 'use strict';
 var fs = require('fs'),
     run  = require('comandante') ,
-    fitmodel = require('./fit_model');
-var bestfit = require('nsolvejs').fit.best;
+    async = require('async'),
+    omsmodel = require('./oms_model');
 var ls = run('ls',['./data']);
 /**@desc
 * The datas on data folder are readed
 * then for every set of datas into the files fits
 * are builded and saved into de DB
 */
+var cb = function (err) {
+  if (err) {console.log('error=',err);return;}
+  console.log('done all');
+};
+var parse = function (item) {
+  return parseFloat(item);
+};
 ls.stdout.on('data', function(files) {
   files.toString().split('\n').forEach(function (file) {
-    /**For every file into de data folder is readed the data*/
+    /**For every file into de data folder is read the data*/
     if (!file) {return ;}
-    var text = fs.readFileSync('./data/'+file,'utf8'),
-    lines = text.split('\n'),
-    data = lines.map(function (line) {
-    line = line.split('\t');
-    var parse = function (item) {
-        return parseFloat(item);
-    };
-    line = line.map(parse);
-    return   line ;
+    var text = fs.readFileSync('./data/'+file,'utf8');
+    var sex = /boy/.test(file) ? 'boy' : 'girl',
+    vs = file.slice(0,file.search('_'));
+    var lines = text.split('\r');
+    lines = lines.map(function (arg) {
+      return arg.split('\n');
     });
-    /**the data are generated*/
-    data=data.slice(1,data.length-1);
-    var l = data[0].length, fit;
-    var callback = function (error, created) {
-      if (error) {
-        console.log('error:',error);
-      }
-      console.log('created',created);
-    };
-    for (var i = 1; i < l ; i++) {
-      /**The fits are generated using the firts column vs rest columns*/
-       fit = bestfit(data,{using : [0,i],fits_name : ['sqrt']});
-       var sex = /boy/.test(file) ? 'boy' : 'girl',
-       datafile = file+'_'+i;
-       /** The fits are saved into DB*/
-       fitmodel.create({
-         sex:sex,
-         datafile: datafile,
-         fit:{
-           f :
-           '('+fit.fitFunction+')',
-           used:fit,
-           date_upgraded : Date.now() },
-         data : {
-           used:data,
-           date_upgraded : Date.now() } },
-        callback );
-    }
+    lines = lines.slice(1,lines.length-1);
+    var data = lines.map(function (line) {
+      return line[1].split('\t').map(parse);
+    });
+    data = data.slice(0,data.length-1);
+    async.eachSeries(data,function (item,callback) {
+      omsmodel.create({sex:sex,
+                       vs :vs,
+                       data:{time : item[0].toString(), measure : item.slice(1)}      },callback);
+    },cb);
   });
 });

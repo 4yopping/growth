@@ -4,11 +4,14 @@
   "description": "Growth module to get best fit of data given",
   "main": "growth.js",
   "dependencies": {
+    "bluebird": "^2.9.34",
     "mongoose": "^4.1.5",
-    "nsolvejs": "0.0.5",
-    "sinon": "^1.16.1"
+    "nsolvejs": "0.0.5"
   },
   "devDependencies": {
+    "async": "^1.4.2",
+    "comandante": "0.0.1",
+    "debug": "^2.2.0",
     "mocha": "^2.3.0",
     "rc": "^1.1.1",
     "sinon": "^1.16.1"
