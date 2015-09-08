@@ -32,9 +32,12 @@ if(error){console.log('error=',error);}
     data_ref[item.data.time] = item.data.measure;
     options.data_ref = data_ref;
   });
-});
-asyncc.series([function () {
-grow(baby,options, spy);
-}],function () {
-console.log(spy.calledWith(Object));
+  asyncc.series([function (cb) {
+  grow(baby,options, callback);
+  console.log('termino el primero');
+  cb(null, 'one');
+}],function (error,results) {
+    console.log('error=',error,'results=',results);
+  });
+
 });
