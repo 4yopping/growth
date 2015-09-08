@@ -2,6 +2,9 @@
 
 var mongoose = require('mongoose');
 var Schema = require('mongoose').Schema;
+var bestfit = require('./bestfit');
+var date = require('./date');
+
 
 /**
  * Growth
@@ -16,7 +19,6 @@ var Schema = require('mongoose').Schema;
  */
 var Growth = function (options) {
   options = options || {};
-
   this.mongo = options.mongo;
   this.model = mongoose.model('Growthfit', new Schema({
     key: { type: String, required: true, index: { unique: true } },
@@ -24,6 +26,8 @@ var Growth = function (options) {
     data: { used: Object,  date_upgraded: { type: Date, default: Date.now }} ,
   }));
 };
+Growth.prototype.getBestFit = bestfit;
+Growth.prototype._yyyymmdd = date ;
 
 
 module.exports = Growth;

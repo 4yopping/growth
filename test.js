@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var bestfit = require('./_growth');
 var conf = require('./conf');
 var Growth = require('./growth');
 var sinon = require('sinon');
@@ -23,12 +22,14 @@ describe('Growth Module', function () {
   });
 
   it('growth should be called with options', function () {
+
     assert.equal(typeof growth.mongo, 'object');
     assert.equal(growth.mongo.db, options.mongo.db);
     assert.equal(growth.mongo.host, options.mongo.host);
     assert.equal(growth.mongo.user, options.mongo.user);
     assert.equal(growth.mongo.pass, options.mongo.pass);
-    assert(growth.mongo.model);
+
+    assert(growth.model);
   });
 
   it('should have this public functions', function () {
@@ -117,10 +118,12 @@ describe('growth', function () {
   });
 
   it('should be return the best fit', function () {
-    bestfit(this.data, this.options,this.spy);
-    console.log('gasfsdafsadf=',this.spy.args );
-    assert(this.spy.args[0] instanceof Object);
-  });
+  growth.getBestFit(this.data, this.options, this.spy);
+  setTimeout(function () {
+    console.log('Growth.getBestFit=',Boolean(this.spy));
+    assert(this.spy.calledWith(Object));
+  }.bind(this));
+});
 
   it('should be save on database', function () {
 		growth.model.findOne({

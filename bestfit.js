@@ -2,6 +2,7 @@
 var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans_ofY ,
      debug = require('debug')('growth');
      var upgrade = true,done,
+      mongoose = require('mongoose'),
      add_data = require('./add_data');
      require('./date')();
 
@@ -61,7 +62,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
         function (error_finding,fit_found){
         if (error_finding) {
           upgrade = false;
-          return done;
+           mongoose.connection.close();
+          return;
         }
         debug('fit_found=',fit_found);
         /** If fit is stored then upgraded*/
@@ -95,7 +97,7 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
             debug('fit_found',fit_found);
             fit_found.save(
               function (error_saving) {
-              if (error_saving) { upgrade = false; debug('debug in error_saving'); return done ;}
+              if (error_saving) { upgrade = false; debug('debug in error_saving'); mongoose.connection.close(); return ;}
               /**
               * This callback is called when the fit is upgraded.
               * @callback calback to upgraded fit.
@@ -106,7 +108,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
                       upgrade   : upgrade ,
                       fit       : fit };
               if(cb){cb(done);}
-              return done ;
+               mongoose.connection.close();
+              return ;
             });
           } else {
             if (fit_found.fit.used) {
@@ -125,7 +128,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
                     fit       : fit }       ;
 
             if(cb){cb(done);}
-            return done ;
+             mongoose.connection.close();
+            return ;
           }
         }else {
             debug('not fit_found');
@@ -155,7 +159,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
                         upgrade   : upgrade ,
                         fit       : fit };
                 if(cb){cb(done);}
-                return done ;
+                 mongoose.connection.close();
+                return ;
               });
           } else {
             upgrade = true;
@@ -177,7 +182,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
                       upgrade   : upgrade ,
                       fit       : fit };
               if(cb){cb(done);}
-              return done;
+               mongoose.connection.close();
+              return ;
             });
           }
         }
@@ -198,7 +204,8 @@ var  bestfit    = require('nsolvejs').fit.best,	               fit,ans_ofX,  ans
                 upgrade   : upgrade ,
                 fit       : fit };
         if(cb){cb(done);}
-        return done ;
+         mongoose.connection.close();
+        return  ;
       }
     }
 };
