@@ -1,6 +1,7 @@
 'use strict';
-var oms_model = require('./oms_model');
-
+var oms_model = require('./oms_model'),
+asyncc    = require('async');
+var sinon = require('sinon');
 var grow = require('./_growth');
 var baby = {
             key  : '55df942c909e10f84b407800',
@@ -23,6 +24,7 @@ var baby = {
             model :require('./growthfit_model'),
             data_ref : {},
             min_data : 10};
+var spy = sinon.spy();
 oms_model.find({vs : baby.vs, sex : baby.sex}).select('data').exec(function (error,data) {
 if(error){console.log('error=',error);}
   var data_ref = {};
@@ -30,6 +32,9 @@ if(error){console.log('error=',error);}
     data_ref[item.data.time] = item.data.measure;
     options.data_ref = data_ref;
   });
-   grow(baby,options, callback);
-
+});
+asyncc.series([function () {
+grow(baby,options, spy);
+}],function () {
+console.log(spy.calledWith(Object));
 });

@@ -85,7 +85,7 @@ describe('growth', function () {
   beforeEach(function () {
     this.spy = sinon.spy();
     this.data = {
-      key: 'baby-55df94',
+      key:  '55df942c909a60f84b407811',
       vs : 'wfa',
             sex : 'boy',
             data     : [[0,5]],
@@ -100,7 +100,7 @@ describe('growth', function () {
       smoothingmethod: 'exponential',
       alpha: 0.8,
       fits_name: ['sqrt'],
-      model :Growth,
+      model :growth.model,
             data_ref : {},
             min_data : 10
     };
@@ -111,23 +111,23 @@ describe('growth', function () {
         data_ref[item.data.time] = item.data.measure;
         this.options.data_ref = data_ref;
     });
+    console.log('this.options.data_ref=',this.options.data_ref);
 
   });
   });
 
   it('should be return the best fit', function () {
-
-    bestfit(this.data, this.options, this.spy);
-    assert(this.spy.calledWith(Object));
+    bestfit(this.data, this.options,this.spy);
+    console.log('gasfsdafsadf=',this.spy.args );
+    assert(this.spy.args[0] instanceof Object);
   });
 
-  it('should be save on database', function (done) {
+  it('should be save on database', function () {
 		growth.model.findOne({
 			key: this.data.key
 		}, function (err, doc) {
-			if (err) { return done(err); }
+			if (err) { assert(false); }
 			assert(doc);
-			done();
 		});
   });
 });
